@@ -14,7 +14,7 @@ body {
 }
 
 .container {
-    background-image: url('ninjaBackground.png');
+    background-image: url("ninjaBackground.png");
     background-repeat: no-repeat;
     /* border: 2px red solid; */
     width: 180vh;
