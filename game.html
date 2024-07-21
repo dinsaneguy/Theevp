@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NInja GAme</title>
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <link rel="stylesheet" href="game.css">
+</head>
+
+<body>
+
+    <div class="healthbar">
+
+        <div class="man1Health"></div>
+        <div class="man2Health"></div>
+    </div>
+    <div class="container">
+        <div class="gameover">
+
+        </div>
+        <div class="man1">
+            <img src="madara_r.png" height="40px" width="40px">
+        </div>
+        <div class="man2">
+            <img src="naruto_s.png" height="40px" width="40px">
+        </div>
+
+    </div>
+    <button id="sound" style="width:7vw; background-color: black;color:blueviolet; position:absolute; right:100px;">PLay
+        Music</button>
+
+    <script>
+
+
+        //audios
+        let kunaiAudio = new Audio("shuriken.mp3");
+        let whooshAudio = new Audio("whoosh.mp3");
+
+        //for sound effects
+        document.getElementById('sound').addEventListener('click', function () {
+            var audioFiles = [
+                'Naruto1.mp4',
+                'NarutoTheme2.mp4',
+                'onePieceTheme.mp4' // Add more audio file paths as needed
+            ];
+
+            var currentAudioIndex = Math.floor(Math.random() * 3);
+
+            function playAudio(index) {
+                if (index >= audioFiles.length) {
+
+                    console.log('All audios have been played.');
+                    currentAudioIndex = 0;
+                    return;
+                }
+
+                var audio = new Audio(audioFiles[index]);
+
+                audio.play().catch(function (error) {
+                    console.error('Error playing audio:', error);
+                });
+
+                audio.addEventListener('ended', function () {
+                    playAudio(index + 1);
+                });
+            }
+
+            playAudio(currentAudioIndex);
+            this.style.display = 'none';
+        });
+        //ended
+
+
+        let isMan1 = true;
+        let isMan1Hit = false;
+        let isMan2Hit = false;
+        //for healthBars
+        let man1Health = document.querySelector(".man1Health");
+        let man2Health = document.querySelector(".man2Health");
+        var man1counter = 5;
+        var man2counter = 5;
+        const man1HealthCheck = setInterval(() => {
+            if (man1counter < 0)
+                clearInterval(man1HealthCheck);
+            else {
+                man1Health.innerHTML = "<h1 style='color:red;'>MADARA:</h1>";
+                for (let i = 1; i <= man1counter; i++)
+                    man1Health.innerHTML += '<span class="material-symbols-outlined" style="color:red; background-color:red;">favorite</span>';
+            }
+        }, 100)
+        const man2HealthCheck = setInterval(() => {
+            if (man2counter < 0)
+                clearInterval(man2HealthCheck);
+            else {
+                man2Health.innerHTML = "<h1 style='color:orange;'>NARUTO:</h1>";
+                for (let i = 1; i <= man2counter; i++)
+                    man2Health.innerHTML += '<span class="material-symbols-outlined" style="color:orange; background-color:orange;">favorite</span>';
+            }
+        }, 100)
+        setInterval(() => {
+            if (isMan1Hit) {
+                man1counter--;
+                isMan1Hit = false;
+            }
+
+        }, 100)
+        setInterval(() => {
+            if (isMan2Hit) {
+                man2counter--;
+                isMan2Hit = false;
+            }
+
+        }, 100)
+        //for GameOver...............................................................................................................
+        let gameover = document.querySelector(".gameover");
+        const gameOVerint = setInterval(() => {
+
+            if (man1counter < 0)
+                man1Health.innerHTML = "<h1 style='color:red;'> MADARA  LOST</h1>";
+            if (man2counter < 0)
+                man2Health.innerHTML = "<h1 style='color:orange;'>NARUTO  LOST</h1>";
+            if (man1counter < 0 || man2counter < 0) {
+                clearInterval(gameOVerint);
+                whooshAudio.play();
+                gameover.style.display = 'block';
+                body.removeEventListener('keyup', handleKeyUp);
+                body.removeEventListener('keydown', handleKeyDown);
+                body.removeEventListener('keyup', handleKeyUp1);
+                body.removeEventListener('keydown', handleKeyDown1);
+            }
+
+        }, 100)
+        //for collision..........................................................................................
+
+
+        function getBoundingBox(element) {
+            return element.getBoundingClientRect();
+        }
+        // Function to check if two rectangles intersect
+        function checkCollision(rect1, rect2) {
+            return !(rect1.right < rect2.left ||
+                rect1.left > rect2.right ||
+                rect1.bottom < rect2.top ||
+                rect1.top > rect2.bottom);
+        }
+        function detectCollisionKunaiMan1(kunai, man, isMan1) {
+            let kunaiRect = getBoundingBox(kunai);
+            let manRect = getBoundingBox(man);
+            if (checkCollision(kunaiRect, manRect)) {
+                if (isMan1) {
+                    console.log('Kunai hit Man 2!');
+                    man.style.opacity = "0.5";
+                    setTimeout(() => {
+                        man.style.opacity = "1";
+                        // man.style.color = "orange";
+
+                    }, 100)
+                    isMan2Hit = true;
+                }
+                else {
+                    console.log('Kunai hit Man 1!');
+                    man1.style.opacity = "0.5";
+                    setTimeout(() => {
+                        man1.style.opacity = "1";
+
+                    }, 100)
+                    isMan1Hit = true;
+                }
+
+            }
+        }
+
+        //MAN ONE..............................................................................................................
+
+        //for mans
+        let topp = Math.floor(Math.random() * 500);
+        let left = Math.floor(Math.random() * 1200);
+        //flag to see if space is pressed
+        let spacePressed = false;
+        // Flag to prevent multiple throws
+        let canThrowKunai = true;
+
+        let delay = 320;
+        let keyStates = {};
+        let moving = false;
+        let throwDirection = 'kunaiRight';
+        let prevKeyPressed = 'kunaiRight';
+        let body = document.querySelector("body");
+        let container = document.querySelector(".container");
+        let man1 = document.querySelector(".man1");
+        man1.style.position = "absolute";
+
+        document.addEventListener('keydown', (event) => {
+            event.preventDefault();
+        })
+        function move() {
+
+            if (topp < 20)
+                topp = 20;
+            else if (topp > 580)
+                topp = 580;
+            if (left < 0)
+                left = 0;
+            else if (left > 1200)
+                left = 1200;
+
+            if (keyStates['87']) { // 'w'
+
+                topp -= 6;
+                moving = true;
+            }
+            if (keyStates['83']) { // 's'
+
+                topp += 6;
+                moving = true;
+            }
+            if (keyStates['65']) { // 'a'
+
+                left -= 6;
+                man1.classList.add("flipped");
+                moving = true;
+            }
+            if (keyStates['68']) { // 'd'
+
+                left += 8;
+                man1.classList.remove("flipped");
+                moving = true;
+            }
+
+
+            man1.style.left = `${left}px`;
+            man1.style.top = `${topp}px`;
+            // Continue calling move using requestAnimationFrame
+            requestAnimationFrame(move);
+            if (moving)
+                man1.innerHTML = "<img src='madara_s.png' height='40px' width='40px'>"
+        }
+        function handleKeyUp(event) {
+            keyStates[event.keyCode] = false;
+            if (event.keyCode != 32 && moving == true) {
+                moving = false;
+                man1.innerHTML = "<img src='madara_r.png' height='40px' width='40px'>";
+            }
+            if (event.keyCode == 32)
+                spacePressed = false;
+        }
+
+        function kunaiThrow() {
+
+            kunaiAudio.play();
+            prevKeyPressed = throwDirection;
+            let kunai = document.createElement("div");
+            kunai.classList.add("kunai");
+            kunai.innerHTML = '<span class="material-symbols-outlined" style="color:red">clock_loader_60</span>';
+            kunai.style.left = `${left}px`;
+            kunai.style.top = `${topp}px`;
+            container.appendChild(kunai);
+            kunai.classList.add(`${throwDirection}`);
+
+
+            // Check for collision with both men
+            let collisionInterval = setInterval(() => {
+                setTimeout(() => {
+                    isMan1 = true;
+                    detectCollisionKunaiMan1(kunai, man2, isMan1);
+                }, 90)
+
+            }, 10);
+
+            setTimeout(() => {
+                clearInterval(collisionInterval); // Stop checking collision after kunai's life ends
+                kunai.classList.remove(`${throwDirection}`);
+                container.removeChild(kunai);
+
+            }, 1000)
+        }
+
+        function handleKeyDown(event) {
+
+            keyStates[event.keyCode] = true;
+
+            if (event.keyCode === 32 && !spacePressed && canThrowKunai) {
+
+                if (keyStates[87]) { // 'W' key
+                    throwDirection = "kunaiUp";
+                } else if (keyStates[65]) { // 'A' key
+                    throwDirection = "kunaiLeft";
+                } else if (keyStates[83]) { // 'S' key
+                    throwDirection = "kunaiDown";
+                } else if (keyStates[68]) { // 'D' key
+                    throwDirection = "kunaiRight";
+                }
+                else {
+                    throwDirection = `${prevKeyPressed}`;
+                }
+
+                spacePressed = true;
+                canThrowKunai = false; // Block further throws
+
+                kunaiThrow();
+                // Allow next throw after a short delay
+                setTimeout(() => {
+                    canThrowKunai = true;
+                }, delay); // Adjust the delay as needed
+            }
+
+        }
+
+        body.addEventListener('keyup', handleKeyUp);
+        body.addEventListener('keydown', handleKeyDown);
+        requestAnimationFrame(move);
+
+        //MAN TWO...........................................................................................................
+
+
+        let topp1 = Math.floor(Math.random() * 500);
+        let left1 = Math.floor(Math.random() * 1200);
+        //flag to see if space is pressed
+        let enterPressed1 = false;
+        // Flag to prevent multiple throws
+        let canThrowKunai1 = true;
+        let delay1 = 320;
+        let keyStates1 = {};
+        let moving1 = false;
+        let throwDirection1='kunaiRight';
+        let prevKeyPressed1='kunaiRight';
+        // let body = document.querySelector("body");
+        // let container = document.querySelector(".container");
+        let man2 = document.querySelector(".man2");
+        man2.style.position = "absolute";
+
+        document.addEventListener('keydown', (event) => {
+            event.preventDefault();
+        })
+        function move1() {
+
+
+            if (topp1 < 20)
+                topp1 = 20;
+            else if (topp1 > 580)
+                topp1 = 580;
+            if (left1 < 0)
+                left1 = 0;
+            else if (left1 > 1200)
+                left1 = 1200;
+
+            if (keyStates1['ArrowUp']) { // 'up'
+
+                moving1 = true;
+                topp1 -= 6;
+            }
+            if (keyStates1['ArrowDown']) { // 'down'
+
+                topp1 += 6;
+                moving1 = true;
+            }
+            if (keyStates1['ArrowLeft']) { // 'left'
+
+                left1 -= 6;
+                man2.classList.add("flipped");
+                moving1 = true;
+            }
+            if (keyStates1['ArrowRight']) { // 'right'
+
+                left1 += 8;
+                man2.classList.remove("flipped");
+                moving1 = true;
+            }
+
+
+            man2.style.left = `${left1}px`;
+            man2.style.top = `${topp1}px`;
+            // Continue calling move using requestAnimationFrame
+            requestAnimationFrame(move1);
+            if (moving1)
+                man2.innerHTML = "<img src='naruto_r.png' height='40px' width='40px'>"
+        }
+        function handleKeyUp1(event) {
+            keyStates1[event.key] = false;
+            if (event.keyCode != 16 && moving1 == true) {
+                moving1 = false;
+                man2.innerHTML = "<img src='naruto_s.png' height='40px' width='40px'>"
+            }
+            if (event.keyCode == 16)
+                enterPressed1 = false;
+
+        }
+        function kunaiThrow1() {
+
+            kunaiAudio.play();
+            prevKeyPressed1 = throwDirection1;
+            let kunai1 = document.createElement("div");
+            kunai1.innerHTML = '<span class="material-symbols-outlined"><h3>star</h3></span>';
+            kunai1.style.left = `${left1}px`;
+            kunai1.style.top = `${topp1}px`;
+            kunai1.classList.add(`${throwDirection1}`);
+            container.appendChild(kunai1);
+
+
+            let collisionInterval1 = setInterval(() => {
+                setTimeout(() => {
+                    isMan1 = false;
+                    detectCollisionKunaiMan1(kunai1, man1, isMan1);
+                }, 90)
+            }, 40);
+
+            setTimeout(() => {
+                clearInterval(collisionInterval1); // Stop checking collision after kunai's life ends
+                container.removeChild(kunai1);
+                kunai1.classList.remove(`${throwDirection1}`);
+            }, 1000)
+        }
+
+        function handleKeyDown1(event) {
+            keyStates1[event.key] = true;
+            if (event.keyCode === 16 && !enterPressed1 && canThrowKunai1) {
+
+                enterPressed1 = true;
+                canThrowKunai1 = false; // Block further throws
+                if (keyStates1['ArrowUp']) { // 'W' key
+                    throwDirection1 = "kunaiUp";
+                } else if (keyStates1['ArrowLeft']) { // 'A' key
+                    throwDirection1 = "kunaiLeft";
+                } else if (keyStates1['ArrowDown']) { // 'S' key
+                    throwDirection1 = "kunaiDown";
+                } else if (keyStates1['ArrowRight']) { // 'D' key
+                    throwDirection1 = "kunaiRight";
+                }
+                else {
+                    throwDirection1 = `${prevKeyPressed1}`;
+                }
+                kunaiThrow1();
+                // Allow next throw after a short delay
+                setTimeout(() => {
+                    canThrowKunai1 = true;
+                }, delay1); // Adjust the delay as needed
+            }
+        }
+
+        body.addEventListener('keyup', handleKeyUp1);
+        body.addEventListener('keydown', handleKeyDown1);
+        requestAnimationFrame(move1);
+
+
+
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,161 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: gray;
+    gap: 2rem;
+}
+
+.container {
+    background-image: url('ninjaBackground.png');
+    background-repeat: no-repeat;
+    /* border: 2px red solid; */
+    width: 180vh;
+    height: 90vh;
+    position: relative;
+}
+
+.gameover {
+    width: 180vh;
+    height: 90vh;
+    display: none;
+    margin: auto;
+    z-index: 100;
+    background-image: url('gameOver.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.healthbar {
+
+    /* border: 2px red solid; */
+    width: 180vh;
+    height: 20px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.man1Health {
+    /* border: 2px black solid; */
+    width: 60vh;
+    height: 20px;
+}
+
+.man2Health {
+    /* border: 2px gold solid; */
+    width: 60vh;
+    height: 20px;
+    text-align: right;
+}
+
+.man1 {
+    color: red;
+    transform: scale(3) scaleX(1);
+    /* Default direction (facing right) */
+    transition: transform 0.3s ease;
+    /* Smooth transition for transform */
+  
+
+}
+
+.man2 {
+    color: orange;
+    transform: scale(3) scaleX(1);
+    /* Default direction (facing right) */
+    transition: transform 0.3s ease;
+    /* Smooth transition for transform */
+}
+
+.flipped {
+    transform: scale(3) scaleX(-1);
+    /*Flipped direction (facing left) */
+}
+
+
+
+.kunaiUp {
+    
+    position: absolute;
+    animation: animateUp 1s linear;
+}
+
+.kunaiDown {
+    
+    position: absolute;
+    animation: animateDown 1s linear;
+}
+
+.kunaiLeft {
+    
+    position: absolute;
+    animation: animateLeft 1s linear;
+}
+
+.kunaiRight {
+    
+    position: absolute;
+    animation: animateRight 1s linear;
+}
+
+@keyframes animateUp {
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateY(-1560px);
+        display: none;
+        visibility: hidden;
+    }
+
+
+}
+
+@keyframes animateDown {
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateY(1560px);
+        visibility: hidden;
+        display: none;
+    }
+
+
+}
+
+@keyframes animateLeft {
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(-1560px);
+        visibility: hidden;
+        display: none;
+    }
+
+
+}
+
+@keyframes animateRight {
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(1560px);
+        visibility: hidden;
+        display: none;
+    }
+
+
+}
