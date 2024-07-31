@@ -11,10 +11,11 @@ body {
     align-items: center;
     background-color: gray;
     gap: 2rem;
+    overflow: hidden;
 }
 
 .container {
-    background-image: url("ninjaBackground.png");
+    background-image: url('ninjaBackground.png');
     background-repeat: no-repeat;
     /* border: 2px red solid; */
     width: 180vh;
@@ -56,17 +57,15 @@ body {
 }
 
 .man1 {
-    color: red;
     transform: scale(3) scaleX(1);
     /* Default direction (facing right) */
     transition: transform 0.3s ease;
     /* Smooth transition for transform */
-  
 
 }
 
 .man2 {
-    color: orange;
+   
     transform: scale(3) scaleX(1);
     /* Default direction (facing right) */
     transition: transform 0.3s ease;

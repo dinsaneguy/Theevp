@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+`<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -29,33 +29,31 @@
         </div>
 
     </div>
-    <button id="sound" style="width:7vw; background-color: black;color:blueviolet; position:absolute; right:100px;">PLay
-        Music</button>
 
     <script>
+        //generals
+        let body = document.querySelector("body");
+        let container = document.querySelector(".container");
 
 
         //audios
+        let playMusic=true;
         let kunaiAudio = new Audio("shuriken.mp3");
         let whooshAudio = new Audio("whoosh.mp3");
-
+       
         //for sound effects
-        document.getElementById('sound').addEventListener('click', function () {
+     
+       function startMusic() {
+        if(playMusic){
+            playMusic=false;
             var audioFiles = [
-                'Naruto1.mp3',
-                'NarutoTheme2.mp3',
-                'onePieceTheme.mp3' // Add more audio file paths as needed
+                'Naruto1.mp4',
+                'NarutoTheme2.mp4',
+                'onePieceTheme.mp4' // Add more audio file paths as needed
             ];
 
             var currentAudioIndex = Math.floor(Math.random() * 3);
-
-            function playAudio(index) {
-                if (index >= audioFiles.length) {
-
-                    console.log('All audios have been played.');
-                    currentAudioIndex = 0;
-                    return;
-                }
+            function playAudio(index) {              
 
                 var audio = new Audio(audioFiles[index]);
 
@@ -64,56 +62,54 @@
                 });
 
                 audio.addEventListener('ended', function () {
-                    playAudio(index + 1);
+                    playAudio(index = Math.floor(Math.random() * 3));
                 });
             }
 
             playAudio(currentAudioIndex);
-            this.style.display = 'none';
-        });
+        }
+           
+        };
+        body.addEventListener('keydown', startMusic);
         //ended
 
 
         let isMan1 = true;
         let isMan1Hit = false;
         let isMan2Hit = false;
+
+
         //for healthBars
         let man1Health = document.querySelector(".man1Health");
         let man2Health = document.querySelector(".man2Health");
         var man1counter = 5;
         var man2counter = 5;
-        const man1HealthCheck = setInterval(() => {
-            if (man1counter < 0)
-                clearInterval(man1HealthCheck);
-            else {
+        man1HealthBarDisplay=(()=>{
                 man1Health.innerHTML = "<h1 style='color:red;'>MADARA:</h1>";
-                for (let i = 1; i <= man1counter; i++)
+                for (let i = 1; i <= man1counter; i++){
                     man1Health.innerHTML += '<span class="material-symbols-outlined" style="color:red; background-color:red;">favorite</span>';
-            }
-        }, 100)
-        const man2HealthCheck = setInterval(() => {
-            if (man2counter < 0)
-                clearInterval(man2HealthCheck);
-            else {
+                }
+        });
+        man2HealthBarDisplay=(()=>{
                 man2Health.innerHTML = "<h1 style='color:orange;'>NARUTO:</h1>";
-                for (let i = 1; i <= man2counter; i++)
+                for (let i = 1; i <= man2counter; i++){
                     man2Health.innerHTML += '<span class="material-symbols-outlined" style="color:orange; background-color:orange;">favorite</span>';
-            }
-        }, 100)
+                }
+        });
         setInterval(() => {
             if (isMan1Hit) {
                 man1counter--;
                 isMan1Hit = false;
             }
 
-        }, 100)
+        }, 300)
         setInterval(() => {
             if (isMan2Hit) {
                 man2counter--;
                 isMan2Hit = false;
             }
 
-        }, 100)
+        }, 300)
         //for GameOver...............................................................................................................
         let gameover = document.querySelector(".gameover");
         const gameOVerint = setInterval(() => {
@@ -146,23 +142,27 @@
                 rect1.bottom < rect2.top ||
                 rect1.top > rect2.bottom);
         }
+       
         function detectCollisionKunaiMan1(kunai, man, isMan1) {
             let kunaiRect = getBoundingBox(kunai);
             let manRect = getBoundingBox(man);
             if (checkCollision(kunaiRect, manRect)) {
                 if (isMan1) {
                     console.log('Kunai hit Man 2!');
+                    man2HealthBarDisplay();
                     man.style.opacity = "0.5";
+                    kunai.style.display="none";
                     setTimeout(() => {
                         man.style.opacity = "1";
-                        // man.style.color = "orange";
 
                     }, 100)
                     isMan2Hit = true;
                 }
                 else {
                     console.log('Kunai hit Man 1!');
+                    man1HealthBarDisplay();
                     man1.style.opacity = "0.5";
+                    kunai.style.display="none";
                     setTimeout(() => {
                         man1.style.opacity = "1";
 
@@ -188,14 +188,10 @@
         let moving = false;
         let throwDirection = 'kunaiRight';
         let prevKeyPressed = 'kunaiRight';
-        let body = document.querySelector("body");
-        let container = document.querySelector(".container");
         let man1 = document.querySelector(".man1");
         man1.style.position = "absolute";
 
-        document.addEventListener('keydown', (event) => {
-            event.preventDefault();
-        })
+     
         function move() {
 
             if (topp < 20)
@@ -322,7 +318,7 @@
         let enterPressed1 = false;
         // Flag to prevent multiple throws
         let canThrowKunai1 = true;
-        let delay1 = 320;
+        let delay1 = 300;
         let keyStates1 = {};
         let moving1 = false;
         let throwDirection1='kunaiRight';
@@ -332,9 +328,7 @@
         let man2 = document.querySelector(".man2");
         man2.style.position = "absolute";
 
-        document.addEventListener('keydown', (event) => {
-            event.preventDefault();
-        })
+      
         function move1() {
 
 
